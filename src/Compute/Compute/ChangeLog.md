@@ -19,6 +19,8 @@
         - Additional information about change #1
 -->
 ## Upcoming Release
+
+## Version 3.4.0
 * Add Update-AzDiskEncryptionSet cmdlet
 * Add EncryptionType and DiskEncryptionSetId parameters to the following cmdlets:
     - New-AzDiskUpdateConfig, New-AzSnapshotUpdateConfig
