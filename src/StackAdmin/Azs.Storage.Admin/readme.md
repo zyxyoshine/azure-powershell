@@ -48,33 +48,117 @@ In this directory, run AutoRest:
 ``` yaml
 require:
   - $(this-folder)/../readme.azurestack.md
+  - $(repo)/specification/azsadmin/resource-manager/storage/readme.md
   - $(repo)/specification/azsadmin/resource-manager/storage/readme.azsautogen.md
-
-subject-prefix: 'Storage'
-module-version: 0.0.1
+```
 
 ### File Renames 
+``` yaml
 module-name: Azs.Storage.Admin 
 csproj: Azs.Storage.Admin.csproj 
 psd1: Azs.Storage.Admin.psd1 
 psm1: Azs.Storage.Admin.psm1
+```
 
+### Parameter default values
+``` yaml
 directive:
+    # Remove cmdlets for AsyncOperation.
+  - where:
+      subject: AsyncOperation
+    remove: true
+    # Remove cmdlets for StorageService.
+  - where:
+      subject: StorageService
+    remove: true
+    # Remove cmdlets for StorageServiceSub.
+  - where:
+      subject: StorageServiceSub
+    remove: true
+    # Remove cmdlets for StorageServiceRg.
+  - where:
+      subject: StorageServiceRg
+    remove: true
+
+    # Rename Get-AzsAcquisition to Get-AzsStorageAcquisition
+  - where:
+      verb: Get
+      subject: Acquisition
+    set:
+      verb: Get
+      subject: StorageAcquisition
+    # Rename Invoke-AzsStorageReclaimStorageAccountStorageCapacity to Start-AzsReclaimStorageCapacity
+  - where:
+      verb: Invoke
+      subject: ReclaimStorageAccountStorageCapacity
+    set:
+      verb: Start
+      subject: ReclaimStorageCapacity
+    # Rename Get-AzsStorageSetting to Get-AzsStorageSettings
+  - where:
+      verb: Get
+      subject: StorageSetting
+    set:
+      verb: Get
+      subject: StorageSettings
+    # Rename Set-AzsStorageSetting to Update-AzsStorageSettings
+  - where:
+      verb: Set
+      subject: StorageSetting
+    set:
+      verb: Update
+      subject: StorageSettings
+
+    # Rename cmdlet parameter name in StorageAccount
+  - where:
+      subject: StorageAccount
+      parameter-name: AccountId
+    set:
+      parameter-name: Name
+      alias: AccountId
+
+    # Rename cmdlet parameter name in StorageAccount
+  - where:
+      subject: StorageSettings
+      parameter-name: RetentionPeriodForDeletedStorageAccountsInDay
+    set:
+      parameter-name: RetentionPeriodForDeletedStorageAccountsInDays
+
+    # Rename cmdlet parameter name and default value in StorageQuota
   - where:
       subject: StorageQuota
       parameter-name: QuotaName
     set:
       parameter-name: Name
+      alias: QuotaName
   - where:
       verb: New
+      subject: StorageQuota
       parameter-name: CapacityInGb
     set:
       default:
         script: '500'
   - where:
-      verb: New
+      subject: StorageQuota
       parameter-name: NumberOfStorageAccount
+    set:
+      parameter-name: NumberOfStorageAccounts
+  - where:
+      verb: New
+      subject: StorageQuota
+      parameter-name: NumberOfStorageAccounts
     set:
       default:
         script: '20'
+    # TODO: Force
+  
+    # Rename model property names
+  - where:
+      model-name: Settings
+      property-name: RetentionPeriodForDeletedStorageAccountsInDay
+    set:
+      property-name: RetentionPeriodForDeletedStorageAccountsInDays
+
+subject-prefix: ''
+module-version: 0.0.1
 ```
