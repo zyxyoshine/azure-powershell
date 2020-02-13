@@ -109,22 +109,28 @@ directive:
       verb: Update
       subject: StorageSettings
 
-    # Rename cmdlet parameter name in StorageAccount
+    # Rename cmdlet parameter name and set default value in StorageAccount 
   - where:
       subject: StorageAccount
       parameter-name: AccountId
     set:
       parameter-name: Name
       alias: AccountId
+  - where:
+      subject: StorageAccount
+      parameter-name: Summary
+    set:
+      default:
+        script: '$false'
 
-    # Rename cmdlet parameter name in StorageAccount
+    # Rename cmdlet parameter name in StorageSettings
   - where:
       subject: StorageSettings
       parameter-name: RetentionPeriodForDeletedStorageAccountsInDay
     set:
       parameter-name: RetentionPeriodForDeletedStorageAccountsInDays
 
-    # Rename cmdlet parameter name and default value in StorageQuota
+    # Rename cmdlet parameter name and set default value in StorageQuota
   - where:
       subject: StorageQuota
       parameter-name: QuotaName
@@ -150,14 +156,109 @@ directive:
     set:
       default:
         script: '20'
-    # TODO: Force
   
+    # Remove GetViaIdentity parameter set in Get-StorageSettings
+  - where:
+      verb: Get
+      subject: StorageSettings
+      variant: GetViaIdentity
+    remove: true
+
+    # Remove UndeleteViaIdentity parameter set in Restore-StorageAccount
+  - where:
+      verb: Restore
+      subject: StorageAccount
+      variant: UndeleteViaIdentity
+    remove: true
+
+    # Remove ReclaimViaIdentity parameter set in Start-AzsReclaimStorageCapacity
+  - where:
+      verb: Start
+      subject: ReclaimStorageCapacity
+      variant: ReclaimViaIdentity
+    remove: true
+
+    # Remove Update parameter set in Update-AzsStorageSettings
+  - where:
+      verb: Update
+      subject: StorageSettings
+      variant: Update
+    remove: true
+
+    # Remove UpdateViaIdentity parameter set in Update-AzsStorageSettings
+  - where:
+      verb: Update
+      subject: StorageSettings
+      variant: ^UpdateViaIdentity(.*)
+    remove: true
+
     # Rename model property names
   - where:
       model-name: Settings
       property-name: RetentionPeriodForDeletedStorageAccountsInDay
     set:
       property-name: RetentionPeriodForDeletedStorageAccountsInDays
+  - where:
+      model-name: StorageQuota
+      property-name: NumberOfStorageAccount
+    set:
+      property-name: NumberOfStorageAccounts
+
+    # Default to Format-List for the Settings, StorageQuota and Acquisition model as there are many important fields
+  - where:
+      model-name: Settings
+    set:
+      suppress-format: true
+  - where:
+      model-name: StorageQuota
+    set:
+      suppress-format: true
+  - where:
+      model-name: Acquisition
+    set:
+      suppress-format: true
+
+    # Hide the auto-generated Get-AzsStorageQuota and expose it through customized one
+  - where:
+      verb: Get
+      subject: StorageQuota
+    hide: true
+
+    # Hide the auto-generated New-AzsStorageQuota and expose it through customized one
+  - where:
+      verb: New
+      subject: StorageQuota
+    hide: true
+
+    # Hide the auto-generated Remove-AzsStorageQuota and expose it through customized one
+  - where:
+      verb: Remove
+      subject: StorageQuota
+    hide: true
+
+    # Hide the auto-generated Set-AzsStorageQuota and expose it through customized one
+  - where:
+      verb: Set
+      subject: StorageQuota
+    hide: true
+
+    # Hide the auto-generated Remove-AzsStorageQuota and expose it through customized one
+  - where:
+      verb: Restore
+      subject: StorageAccount
+    hide: true
+
+    # Hide the auto-generated Remove-AzsStorageQuota and expose it through customized one
+  - where:
+      verb: Start
+      subject: ReclaimStorageCapacity
+    hide: true
+
+    # Hide the auto-generated Update-AzsStorageSettings and expose it through customized one
+  - where:
+      verb: Update
+      subject: StorageSettings
+    hide: true
 
 subject-prefix: ''
 module-version: 0.0.1
